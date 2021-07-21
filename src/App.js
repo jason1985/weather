@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react'
 import "./App.css"
 import moment from 'moment'
+import Temperature from './components/Temperature'
+import UpdateIcon from './components/UpdateIcon'
+
+
 
 function App() {
   const [data, setData] = useState(null)
   const [location, setLocation] = useState('Saigon')
   const [input, setInput] = useState('Saigon')
   const [celsius, setCelsius] = useState(false)
+  const [update, setUpdate] = useState(false)
 
   const getData = async () => {
     const response = await fetch(
@@ -24,7 +29,8 @@ function App() {
 
   function handleSubmit(e) {
     e.preventDefault()
-    setLocation(input)
+    // setLocation(input)
+    updateData()
   }
 
   function kelvinToC(kelvin){
@@ -46,6 +52,15 @@ function App() {
     }
   }
 
+  function updateData(){
+    if(update === true) return 
+
+    setUpdate(true)
+    setLocation(input)
+    setTimeout(() => {
+      setUpdate(false)
+    },500);
+  }
   return (
     <div className="container">
       <form onSubmit={handleSubmit}>
@@ -54,8 +69,10 @@ function App() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
+        <div onClick={updateData}>
+          <UpdateIcon update={update}/>
+        </div>
       </form>
-          <button onClick={()=>setCelsius(!celsius)}>celcius</button>
       <div  className="glass">
         <div className="panel">
           <pre>Raw JSON:{JSON.stringify(data, undefined, 2)}</pre>
@@ -64,12 +81,16 @@ function App() {
           <div className="date">{moment().format('dddd, Do MMMM')}</div>
           <div className="time">{moment().format('h:mm a')}</div>
           {data?.name ? <div className="location">{data?.name}, {data?.sys?.country}</div>: ""}
-          <img src={`http://openweathermap.org/img/wn/${data?.weather?.[0]?.icon}@2x.png`} alt="weather icon" />
-          {data?.main?.temp ?
+          <img src={`http://openweathermap.org/img/wn/${data?.weather?.[0]?.icon}@2x.png`} onError={(e)=>{e.target.onerror = null; e.target.src="http://openweathermap.org/img/wn/03n@2x.png"}} alt="weather icon" />
+          {/* {data?.main?.temp ?
             <div className="temp">
               {tempStandard(data?.main?.temp)}&deg;
             </div>
-          : ""}
+          : ""} */}
+          <div onClick={()=>setCelsius(!celsius)}>
+
+          <Temperature cel={celsius} temp={tempStandard(data?.main?.temp)} />
+          </div>
           <div className="description">{data?.weather?.[0]?.description}</div>
           <div className="error">{data?.message}</div>
         </div>

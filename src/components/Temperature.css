@@ -1,0 +1,27 @@
+/* TODO: clean this up */
+.temperature{
+	cursor: pointer;
+	user-select: none;
+	margin-left: 36px;
+}
+
+.temp {
+  display: inline-block;
+  font-size: 3em;
+}
+
+span {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.c,.f{
+	color: #7669695e;
+}
+
+.divider {
+  vertical-align: top;
+  margin-left: 3px;
+  margin-right: 1px;
+  margin-top: -1px;
+}

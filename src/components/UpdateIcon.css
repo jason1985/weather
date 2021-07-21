@@ -1,0 +1,13 @@
+.icon {
+	margin-left: 4px;
+	color: white;
+	height: 35px;
+	width: 35px;
+	cursor: pointer;
+	transform: rotate(0deg);
+}
+
+.update {
+		transform: rotate(-360deg);
+		transition: transform .51s linear;
+}
