@@ -4,8 +4,6 @@ import moment from 'moment'
 import Temperature from './components/Temperature'
 import UpdateIcon from './components/UpdateIcon'
 
-
-
 function App() {
   const [data, setData] = useState(null)
   const [location, setLocation] = useState('Saigon')
@@ -63,12 +61,14 @@ function App() {
   }
   return (
     <div className="container">
+      <div className="app">
+
       <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-        />
+          />
         <div onClick={updateData}>
           <UpdateIcon update={update}/>
         </div>
@@ -82,18 +82,13 @@ function App() {
           <div className="time">{moment().format('h:mm a')}</div>
           {data?.name ? <div className="location">{data?.name}, {data?.sys?.country}</div>: ""}
           <img src={`http://openweathermap.org/img/wn/${data?.weather?.[0]?.icon}@2x.png`} onError={(e)=>{e.target.onerror = null; e.target.src="http://openweathermap.org/img/wn/03n@2x.png"}} alt="weather icon" />
-          {/* {data?.main?.temp ?
-            <div className="temp">
-              {tempStandard(data?.main?.temp)}&deg;
-            </div>
-          : ""} */}
           <div onClick={()=>setCelsius(!celsius)}>
-
-          <Temperature cel={celsius} temp={tempStandard(data?.main?.temp)} />
+            <Temperature cel={celsius} temp={tempStandard(data?.main?.temp)} />
           </div>
           <div className="description">{data?.weather?.[0]?.description}</div>
-          <div className="error">{data?.message}</div>
+          <div className={data?.message ? "error" : ""}>{data?.message}</div>
         </div>
+          </div>
       </div>
 {/* <div className="sun"></div> */}
     </div>
