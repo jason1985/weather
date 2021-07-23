@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import "./App.css"
 import moment from 'moment'
 import Temperature from './components/Temperature'
 import UpdateIcon from './components/UpdateIcon'
+import "./App.css"
 
 function App() {
   const [data, setData] = useState(null)
@@ -10,6 +10,11 @@ function App() {
   const [input, setInput] = useState('Saigon')
   const [celsius, setCelsius] = useState(false)
   const [update, setUpdate] = useState(false)
+
+  useEffect(() => {
+    getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location])
 
   const getData = async () => {
     const response = await fetch(
@@ -20,34 +25,10 @@ function App() {
     console.log(json)
   }
 
-  useEffect(() => {
-    getData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
-
   function handleSubmit(e) {
     e.preventDefault()
     // setLocation(input)
     updateData()
-  }
-
-  function kelvinToC(kelvin){
-    return Math.floor((kelvin - 273.15))
-  }
-  
-  function kelvinToF(kelvin){
-    return Math.floor((((kelvin - 273.15) * (9/5)) + 32))
-  }
-
-  //checks if we want celsius or fahrenheit
-  function tempStandard(kelvin){
-    if(isNaN(kelvin)) return
-
-    if(celsius === false) {
-      return kelvinToF(kelvin)
-    } else {
-      return kelvinToC(kelvin)
-    }
   }
 
   function updateData(){
@@ -83,7 +64,7 @@ function App() {
           {data?.name ? <div className="location">{data?.name}, {data?.sys?.country}</div>: ""}
           <img src={`http://openweathermap.org/img/wn/${data?.weather?.[0]?.icon}@2x.png`} onError={(e)=>{e.target.onerror = null; e.target.src="http://openweathermap.org/img/wn/03n@2x.png"}} alt="weather icon" />
           <div onClick={()=>setCelsius(!celsius)}>
-            <Temperature cel={celsius} temp={tempStandard(data?.main?.temp)} />
+            <Temperature cel={celsius} temp={data?.main?.temp} />
           </div>
           <div className="description">{data?.weather?.[0]?.description}</div>
           <div className={data?.message ? "error" : ""}>{data?.message}</div>
