@@ -13,7 +13,7 @@ function App() {
 
   //TODO: clean up this useEffect
   useEffect(() => {
-    const getData = async () => {
+    const getWeatherData = async () => {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=54d34401fece1e4efc1c4d41e8388c4c`
       )
@@ -23,19 +23,19 @@ function App() {
     }
 
     if(weatherData===null) {//first render
-      getData()
+      getWeatherData()
     } else if(updating){
-      getData()
+      getWeatherData()
     }
   },[updating,location])
 
   function handleSubmit(e) {
     e.preventDefault()
-    updateData()
+    updateWeatherData()
   }
 
   //only allows for 1 api request every 500ms
-  function updateData(){
+  function updateWeatherData(){
     if(updating === true) return 
 
     setUpdating(true)
@@ -53,10 +53,8 @@ function App() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            />
-          <div onClick={updateData}>
-            <UpdateIcon update={updating}/>
-          </div>
+          />
+          <UpdateIcon updateWeatherData={updateWeatherData} update={updating}/>
         </form>
         <div  className="glass">
           <div className="panel">
@@ -67,9 +65,7 @@ function App() {
             <div className="time">{moment().format('h:mm a')}</div>
             {weatherData?.name ? <div className="location">{weatherData?.name}, {weatherData?.sys?.country}</div>: ""}
             <img src={`http://openweathermap.org/img/wn/${weatherData?.weather?.[0]?.icon}@2x.png`} onError={(e)=>{e.target.onerror = null; e.target.src="http://openweathermap.org/img/wn/03n@2x.png"}} alt="weather icon" />
-            <div onClick={()=>setCelsius(!celsius)}>
-              <Temperature cel={celsius} temp={weatherData?.main?.temp} />
-            </div>
+              <Temperature setCelsius={setCelsius} cel={celsius} temp={weatherData?.main?.temp} />
             <div className="description">{weatherData?.weather?.[0]?.description}</div>
             <div className={weatherData?.message ? "error" : ""}>{weatherData?.message}</div>
           </div>

@@ -21,9 +21,9 @@ function temperatureUnit(kelvin,cel){
 
 //takes in Kelvin temperature unit
 //if cel true convert to celsius else convert for Fahrenheit
-function Temperature({ temp, cel }) {
+function Temperature({ temp, cel, setCelsius }) {
   return (
-    <div className="temperature">
+    <div onClick={()=>setCelsius(!cel)} className="temperature">
       <div className="temp">{temperatureUnit(temp,cel)}</div>
 				<span style={{color: cel ? '#fcf8f1' : null}}  className="c">&deg;C</span>
 				<span className="divider">|</span>
