@@ -12,6 +12,19 @@ function App() {
   const [updating, setUpdating] = useState(false)
 
   //TODO: clean up this useEffect
+
+  useEffect(()=>{ //first render get New York City's weather
+    (async () => {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=New York City&appid=54d34401fece1e4efc1c4d41e8388c4c`
+      )
+      const json = await response.json()
+      setWeatherData(json)
+      console.log(json)
+    })()
+  },[])
+  
+  
   useEffect(() => {
     const getWeatherData = async () => {
       const response = await fetch(
@@ -22,9 +35,7 @@ function App() {
       console.log(json)
     }
 
-    if(weatherData===null) {//first render
-      getWeatherData()
-    } else if(updating){
+    if(updating){
       getWeatherData()
     }
   },[updating,location])
