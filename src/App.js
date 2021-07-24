@@ -5,73 +5,76 @@ import UpdateIcon from './components/UpdateIcon'
 import "./App.css"
 
 function App() {
-  const [data, setData] = useState(null)
-  const [location, setLocation] = useState('Saigon')
-  const [input, setInput] = useState('Saigon')
+  const [weatherData, setWeatherData] = useState(null)
+  const [location, setLocation] = useState('New York City')
+  const [input, setInput] = useState('New York City')
   const [celsius, setCelsius] = useState(false)
-  const [update, setUpdate] = useState(false)
+  const [updating, setUpdating] = useState(false)
 
+  //TODO: clean up this useEffect
   useEffect(() => {
-    getData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
+    const getData = async () => {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=54d34401fece1e4efc1c4d41e8388c4c`
+      )
+      const json = await response.json()
+      setWeatherData(json)
+      console.log(json)
+    }
 
-  const getData = async () => {
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=54d34401fece1e4efc1c4d41e8388c4c`
-    )
-    const json = await response.json()
-    setData(json)
-    console.log(json)
-  }
+    if(weatherData===null) {//first render
+      getData()
+    } else if(updating){
+      getData()
+    }
+  },[updating,location])
 
   function handleSubmit(e) {
     e.preventDefault()
-    // setLocation(input)
     updateData()
   }
 
+  //only allows for 1 api request every 500ms
   function updateData(){
-    if(update === true) return 
+    if(updating === true) return 
 
-    setUpdate(true)
+    setUpdating(true)
     setLocation(input)
     setTimeout(() => {
-      setUpdate(false)
+      setUpdating(false)
     },500);
   }
+
   return (
     <div className="container">
       <div className="app">
-
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          />
-        <div onClick={updateData}>
-          <UpdateIcon update={update}/>
-        </div>
-      </form>
-      <div  className="glass">
-        <div className="panel">
-          <pre>Raw JSON:{JSON.stringify(data, undefined, 2)}</pre>
-        </div>
-        <div className="card">
-          <div className="date">{moment().format('dddd, Do MMMM')}</div>
-          <div className="time">{moment().format('h:mm a')}</div>
-          {data?.name ? <div className="location">{data?.name}, {data?.sys?.country}</div>: ""}
-          <img src={`http://openweathermap.org/img/wn/${data?.weather?.[0]?.icon}@2x.png`} onError={(e)=>{e.target.onerror = null; e.target.src="http://openweathermap.org/img/wn/03n@2x.png"}} alt="weather icon" />
-          <div onClick={()=>setCelsius(!celsius)}>
-            <Temperature cel={celsius} temp={data?.main?.temp} />
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            />
+          <div onClick={updateData}>
+            <UpdateIcon update={updating}/>
           </div>
-          <div className="description">{data?.weather?.[0]?.description}</div>
-          <div className={data?.message ? "error" : ""}>{data?.message}</div>
-        </div>
+        </form>
+        <div  className="glass">
+          <div className="panel">
+            <pre>Raw JSON:{JSON.stringify(weatherData, undefined, 2)}</pre>
           </div>
-      </div>
-{/* <div className="sun"></div> */}
+          <div className="card">
+            <div className="date">{moment().format('dddd, Do MMMM')}</div>
+            <div className="time">{moment().format('h:mm a')}</div>
+            {weatherData?.name ? <div className="location">{weatherData?.name}, {weatherData?.sys?.country}</div>: ""}
+            <img src={`http://openweathermap.org/img/wn/${weatherData?.weather?.[0]?.icon}@2x.png`} onError={(e)=>{e.target.onerror = null; e.target.src="http://openweathermap.org/img/wn/03n@2x.png"}} alt="weather icon" />
+            <div onClick={()=>setCelsius(!celsius)}>
+              <Temperature cel={celsius} temp={weatherData?.main?.temp} />
+            </div>
+            <div className="description">{weatherData?.weather?.[0]?.description}</div>
+            <div className={weatherData?.message ? "error" : ""}>{weatherData?.message}</div>
+          </div>
+        </div>
+        </div>
     </div>
   )
 }
@@ -80,5 +83,4 @@ export default App
 
 
 
-/* <h3>High: {data?.main?.temp_max}</h3>
-<h3>Low: {data?.main?.temp_min}</h3> */
+/* <div className="sun"></div> */

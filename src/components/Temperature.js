@@ -26,7 +26,7 @@ function Temperature({ temp, cel }) {
     <div className="temperature">
       <div className="temp">{temperatureUnit(temp,cel)}</div>
 				<span style={{color: cel ? '#fcf8f1' : null}}  className="c">&deg;C</span>
-					<span className="divider">|</span>
+				<span className="divider">|</span>
 				<span style={{color: cel ? null : '#fcf8f1'}} className="f">&deg;F</span>
     </div>
   )
